@@ -15,8 +15,11 @@ boboman:~/code/mernapps$ npm -v
 ```
 
 ## 2 - Docker
-The project is headed for kubernetes (k8s) but local development is more convenient with docker compose.  As the stack grows in complexity it should probably move to remote k8s-clusters for a more scalable and robust feature development setup.
 [Install docker for your system](https://docs.docker.com/engine/install/)
+
+The project is headed for kubernetes (k8s) but local development is more convenient with docker compose.  As the stack grows in complexity it should probably move to remote k8s-clusters for a more scalable and robust feature development setup.
+
+
 
 ```shell
 boboman:~/code/mernapps$ docker -v
@@ -29,9 +32,15 @@ Docker Compose version v2.2.1
 # Run the app
 ## Docker Compose
 
-Currently the compose file should build and start two containers representing the `services` section in the `docker-compose.yml`.  One service for the mongo database and the other for the web server.  Docker will create a directory in the root called mongo-volume and mount into the container at /data/db (*mongos default data directory*)
+All the workflow commands should be run from the root directory of the project -- Same directory as `docker-compose.yml`
 
- `Dockerfile.app` is used as the input-file for the docker build command.  `compose` is also configured to use it.  The dockerfile instructions will copy the project source into /usr/src/app and execute the `CMD` directive on startup among other configuration.  Caveat: some configuration is redundant with compose, and will be overridden by `compose up` - port forwarding as a prime example.
+Currently the compose file `docker-compose.yml` is set to build and start two containers in the `services` section.  One service `mongo` for the database and the other `app` for the web server.  Docker will create a directory in the root of the project called mongo-volume and mount as a volume into the container at /data/db (*mongos default data directory*)
+
+ `Dockerfile.app` is used as the input-file for the `docker build` command and configured in the `docker-compose.yml` as the dockerfile for the `app` service.  The dockerfile instructions will copy the project source into `/usr/src/app`, install dependencies, and execute the `CMD` directive on startup.  
+ 
+ Technically you can build images and run the containers individually without using compose, but this would take more explicit docker knowledge to wire together.
+ 
+*Caveat: some configuration is redundant with compose, and will be overridden by the settings in the yml file when running `docker compose up` - port forwarding as a prime example.*
 
 ```shell
 boboman:~/code/mernapps$ docker compose up -d
@@ -41,7 +50,7 @@ boboman:~/code/mernapps$ docker compose up -d
  ⠿ Container mernapps-app-1    Started   
  ```
 
-The application should be available at localhost:8080.  There are currently only a few routes implemented to interact with a hello-world style mongo model.  Check the code to see what to hit!
+The application should be available at localhost:8080/.  you should get a basic JSON response from `GET '/' - 200 - {"message":"Welcome to Bobos application."}`  There are currently only a few routes implemented to interact with a hello-world style mongo model.  Check the code to see what to hit!
 
 If you make any new changes, you need to run`docker compose build`. Sometimes cache will screw you up when docker reuses layers that you know need changing so `docker compose build --no-cache` can be useful.
 
