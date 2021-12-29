@@ -5,7 +5,8 @@
   "main": "api/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node api/server.js"
+    "start": "npm run build && nodemon api/server.js",
+    "build": "cd frontend && npm i && npm run build && cd .."
   },
   "author": "",
   "license": "ISC",

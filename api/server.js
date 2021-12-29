@@ -1,14 +1,15 @@
 const express = require("express");
-const cors = require("cors");
+const path = require("path");
+//const cors = require("cors");
 
 const app = express();
 const db = require("./models");
 
-var corsOptions = {
-  origin: "http://localhost:8081"
-};
+// var corsOptions = {
+//   origin: "http://localhost:8081"
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -16,9 +17,11 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Bobos application." });
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+// simple catch-all route
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
 const tutControl = require('./controllers/tutorials.controller');
